@@ -258,7 +258,7 @@ void LTADataParser::covertCarparksLots2CSV(){
 	string node_date = "d:CreateDate";
 
 
-	map<string, vector<int> > lotsSet;
+	LotsSetMap lotsSetMap;
 	map<int, string> id_name_map;
 	//cout<<d_direction<<", "<<d_start<<", "<<d_end<<", "<<d_travelTime<< ", "<<d_data<<endl<< ", ";
 	for (unsigned int i = 0; i < result.size(); i++) {
@@ -274,11 +274,15 @@ void LTADataParser::covertCarparksLots2CSV(){
 		string key = getTimeKey(d_date);
 
 
-		if(lotsSet.end()==lotsSet.find(key)){
 
-			lotsSet[key].resize(carParkNum,0);
+		map<string,vector<int> >::iterator itr = lotsSetMap.find(key);
+
+		if(lotsSetMap.end()==itr){
+			lotsSetMap.lotsSet[key].resize(carParkNum,0);
+			itr = lotsSetMap.find(key);
 		}
-		lotsSet[key][d_carParkId-1]=d_lots;
+
+		itr->second[d_carParkId-1]=d_lots;
 
 		if(id_name_map.find(d_carParkId-1)==id_name_map.end()){
 			id_name_map[d_carParkId-1] = d_place;
@@ -309,7 +313,7 @@ void LTADataParser::covertCarparksLots2CSV(){
 		outf<<endl;
 	}
 
-	for(std::map<string,vector<int> >::iterator it = lotsSet.begin();it!=lotsSet.end();it++){
+	for(std::map<string,vector<int> >::iterator it = lotsSetMap.lotsSet.begin();it!=lotsSetMap.lotsSet.end();it++){
 		//cout<<it->first<<endl;
 		outf<<it->first<<", ";
 		for(uint j=0;j<it->second.size();j++){
@@ -320,7 +324,7 @@ void LTADataParser::covertCarparksLots2CSV(){
 
 	outf.close();
 
-	cout <<dataFile<< " XML load successfully! with total time steps:" << lotsSet.size() << endl;
+	cout <<dataFile<< " XML load successfully! with total time steps:" << lotsSetMap.lotsSet.size() << endl;
 
 
 }

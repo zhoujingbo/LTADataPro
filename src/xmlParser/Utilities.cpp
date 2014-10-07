@@ -6,7 +6,10 @@
 #include <cctype>
 #include <locale>
 #include <vector>
+#include <map>
 #include "Utilities.h"
+
+using namespace std;
 
 
 int strToInt(std::string data){
@@ -95,3 +98,6 @@ std::vector<float> splitAndParseFloat(const std::string &s, char delim){
     }
     return elems;
 }
+
+
+
