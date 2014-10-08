@@ -213,10 +213,57 @@ string getTimeKey(string str){
 	return key;
 }
 
-void LTADataParser::covertCarparksLots2CSV(){
+string getTimeDay(string time_start, int offset){
+	time_t now = time(0);
+	struct tm* key_time=localtime(&now);
 
+	strptime(time_start.c_str(), "%d %b %y", key_time);
+
+	key_time->tm_mday+=offset;
+	mktime(key_time);
+
+	char time_day_char[256];
+	strftime(time_day_char,sizeof(time_day_char),"%d %b %y", key_time);
+	string time_day(time_day_char);
+	//cout<<"time_day:"<<time_day<<endl;
+	return time_day;
+}
+
+string getTimeMon(string time_start,int offset){
+	time_t now = time(0);
+	struct tm* key_time=localtime(&now);
+
+	strptime(time_start.c_str(), "%d %b %y", key_time);
+
+	key_time->tm_mday+=offset;
+	mktime(key_time);
+
+	char time_mon_char[256];
+	strftime(time_mon_char,sizeof(time_mon_char),"%b %y", key_time);
+	string time_mon(time_mon_char);
+	//cout<<"time_mon:"<<time_mon<<endl;
+
+	return time_mon;
+
+}
+
+void LTADataParser::covertCarparksLots2CSV(){
 	string outfileName ="data/lta_carParksLots.csv";
 	int carParkNum = 26;
+   ////media/hd1/zhoujingbo/data/LTA data/Francis/
+	string time_start = "01 Mar 14";
+
+	for(int i=0;i<30;i++){
+	string time_day = getTimeDay(time_start,i);
+	string time_mon = getTimeMon(time_start,i);
+	cout<<" to process :"<<time_mon<<"/"<<time_day<<endl;
+	string dataFile = "/media/hd1/zhoujingbo/data/LTA data/Francis/"+time_mon+"/"+time_day+"/CarparksLotsAvailability_CarParkSet.xml";
+
+	covertCarparksLots2CSV_perDay(outfileName,dataFile,carParkNum);
+	}
+}
+
+void LTADataParser::covertCarparksLots2CSV_perDay(string outfileName, string dataFile, int carParkNum){
 
 
 
@@ -239,11 +286,11 @@ void LTADataParser::covertCarparksLots2CSV(){
 	}
 
 
-	string dataFile = "data/Mar 14/16 Mar 14/CarparksLotsAvailability_CarParkSet.xml";
+
 
 	if (!doc.load_file(dataFile.c_str())) {
 		cout << dataFile<<" XML open failed!" << endl;
-
+		exit(1);
 		return;
 	}
 
@@ -295,7 +342,7 @@ void LTADataParser::covertCarparksLots2CSV(){
 
 	}
 
-	cout<<"for debug finished loading data"<<endl;
+	cout<<"start writing data of "<<dataFile<<" into file:"<<outfileName<<endl;
 
 	if(!file_exist){
 		outf<<"# id name map, ";
@@ -305,7 +352,7 @@ void LTADataParser::covertCarparksLots2CSV(){
 		outf<<endl;
 
 
-		cout<<"output command line to:"<<outfileName<<endl;
+		cout<<outfileName<<" is first created, "<<"write command line to:"<<outfileName<<endl;
 		outf<<"# time,";
 		for(int i=0;i<carParkNum;i++){
 				outf<<" "<<i<<",";
@@ -324,7 +371,7 @@ void LTADataParser::covertCarparksLots2CSV(){
 
 	outf.close();
 
-	cout <<dataFile<< " XML load successfully! with total time steps:" << lotsSetMap.lotsSet.size() << endl;
+	cout <<dataFile<< " processed successfully! with total time steps:" << lotsSetMap.lotsSet.size() << endl;
 
 
 }

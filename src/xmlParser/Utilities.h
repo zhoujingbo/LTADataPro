@@ -60,7 +60,6 @@ public:
 			char key_var_char[256];
 			strftime(key_var_char,sizeof(key_var_char),"%Y-%m-%dT%H:%M", &key_time);
 			string key_var(key_var_char);
-			cout<<"for debug key_var:"<<key_var<<endl;
 			itr = lotsSet.find(key_var);
 			if(itr!=lotsSet.end()){
 				return itr;
