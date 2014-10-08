@@ -28,7 +28,7 @@ public:
 	void loadTravelTimeSetDataFile();
 	void loadCarparksLotsDataFile();
 	void covertCarparksLots2CSV();
-	void covertCarparksLots2CSV_perDay(string outfileName, string dataFile, int carParkNum);
+	bool covertCarparksLots2CSV_perDay(string outfileName, string dataFile, int carParkNum, int timeInterval);
 };
 
 
